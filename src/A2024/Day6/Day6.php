@@ -34,18 +34,11 @@ class Day6 extends AdventOfCode
 
     public function rotate90(Direction $direction): array
     {
-        $newDirection = match ($direction) {
-            Direction::N => Direction::E,
-            Direction::E => Direction::S,
-            Direction::S => Direction::W,
-            Direction::W => Direction::N,
-        };
-
-        return match ($newDirection) {
-            Direction::N => [Direction::N, -1, 0],
-            Direction::E => [Direction::E, 0, 1],
-            Direction::S => [Direction::S, 1, 0],
-            Direction::W => [Direction::W, 0, -1],
+        return match ($direction) {
+            Direction::N => [Direction::E, 0, 1],
+            Direction::E => [Direction::S, 1, 0],
+            Direction::S => [Direction::W, 0, -1],
+            Direction::W => [Direction::N, -1, 0],
         };
     }
 
