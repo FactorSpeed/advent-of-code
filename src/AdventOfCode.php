@@ -9,7 +9,7 @@ use Symfony\Component\Console\Output\ConsoleOutput;
 class AdventOfCode
 {
     public string $file;
-    public mixed $dataset;
+    public array|string $dataset;
 
     private ?ConsoleOutput $output;
 
