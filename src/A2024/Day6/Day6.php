@@ -16,12 +16,13 @@ class Day6 extends AdventOfCode
             $dataset[] = str_split(trim($line));
         }
 
-        $this->dataset = $dataset;
+        $this->dataset['init'] = $dataset;
+        $this->dataset['solved'] = $dataset;
     }
 
     public function getStartPoint(): array
     {
-        foreach ($this->dataset as $x => $xv) {
+        foreach ($this->dataset['init'] as $x => $xv) {
             foreach ($xv as $y => $yv) {
                 if ($yv === "^") {
                     return [$x, $y];
@@ -42,13 +43,13 @@ class Day6 extends AdventOfCode
         };
     }
 
-    public function getScore(array $dataset): int
+    public function getScore(): int
     {
         $result = 0;
 
-        foreach ($dataset as $xv) {
+        foreach ($this->dataset['solved'] as $xv) {
             foreach ($xv as $yv) {
-                if ($yv === "X") {
+                if ($yv === "X" || $yv === "^") {
                     $result++;
                 }
             }
@@ -57,35 +58,93 @@ class Day6 extends AdventOfCode
         return $result;
     }
 
-    public function part1(): int
+    public function loop(array &$dataset, Direction $direction, int $sx, int $sy, int $vx, int $vy, int $mx, int $my): void
     {
-        [$sx, $sy] = $this->getStartPoint();
-
-        [$direction, $vx, $vy] = $this->rotate90(Direction::W);
-
-        $dataset = $this->dataset;
-
-        $dataset[$sx][$sy] = 'X';
-
         while (true) {
-            if (!isset($dataset[$sx + $vx][$sy + $vy])) {
+            [$nsx, $nsy] = [$sx + $vx, $sy + $vy];
+
+            if ($nsx < 0 || $nsy < 0 || $nsx >= $mx || $nsy >= $my) {
                 break;
             }
 
-            if ($dataset[$sx + $vx][$sy + $vy] === '#') {
+            if ($dataset[$nsx][$nsy] === '#') {
                 [$direction, $vx, $vy] = $this->rotate90($direction);
-            } else {
-                [$sx, $sy] = [$sx + $vx, $sy + $vy];
-                $dataset[$sx][$sy] = 'X';
+                continue;
             }
-        }
 
-        return $this->getScore($dataset);
+            $dataset[$nsx][$nsy] = 'X';
+
+            [$sx, $sy] = [$nsx, $nsy];
+        }
+    }
+
+    public function getDimensions(): array
+    {
+        return [count($this->dataset['init']), count($this->dataset['init'][0])];
+    }
+
+    public function part1(): int
+    {
+        [$sx, $sy] = $this->getStartPoint();
+        [$direction, $vx, $vy] = $this->rotate90(Direction::W);
+        [$mx, $my] = $this->getDimensions();
+
+        $this->loop($this->dataset['solved'], $direction, $sx, $sy, $vx, $vy, $mx, $my);
+
+        return $this->getScore();
+    }
+
+    public function loop2(array $dataset, Direction $direction, int $sx, int $sy, int $vx, int $vy, int $mx, int $my): bool
+    {
+        $history = [];
+
+        while (true) {
+            [$nsx, $nsy] = [$sx + $vx, $sy + $vy];
+
+            if ($nsx < 0 || $nsy < 0 || $nsx >= $mx || $nsy >= $my) {
+                return false;
+            }
+
+            if ($dataset[$nsx][$nsy] === '#') {
+                [$direction, $vx, $vy] = $this->rotate90($direction);
+                continue;
+            }
+
+            $dataset[$nsx][$nsy] = 'X';
+
+            $report = implode('-', [$direction->value, $nsx, $nsy]);
+
+            if (in_array($report, $history, true)) {
+                return true;
+            }
+
+            $history[] = $report;
+
+            [$sx, $sy] = [$nsx, $nsy];
+        }
     }
 
     public function part2(): int
     {
-        return 0;
+        [$sx, $sy] = $this->getStartPoint();
+        [$direction, $vx, $vy] = $this->rotate90(Direction::W);
+        [$mx, $my] = $this->getDimensions();
+
+        $result = 0;
+
+        foreach ($this->dataset['solved'] as $x => $xv) {
+            foreach ($xv as $y => $yv) {
+                if ($yv === "X") {
+                    $dataset = $this->dataset['init'];
+
+                    $dataset[$x][$y] = '#';
+
+                    $result += $this->loop2($dataset, $direction, $sx, $sy, $vx, $vy, $mx, $my);
+                }
+            }
+        }
+
+        return $result;
     }
 }
 
