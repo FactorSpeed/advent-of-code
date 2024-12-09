@@ -13,7 +13,7 @@ class Day2 extends AdventOfCode
         $dataset = [];
 
         foreach (file($this->file) as $line) {
-            $dataset[] = array_map(fn($a) => (int)$a, explode(' ', str_replace("\n", '', $line)));
+            $dataset[] = array_map(static fn($a) => (int)$a, explode(' ', str_replace("\n", '', $line)));
         }
 
         $this->dataset = $dataset;
@@ -74,7 +74,7 @@ class Day2 extends AdventOfCode
                 continue;
             }
 
-            for ($i = 0; $i < count($line); $i++) {
+            for ($i = 0, $iMax = count($line); $i < $iMax; $i++) {
                 $t = array_merge(
                     array_slice($line, 0, $i),
                     array_slice($line, $i + 1)

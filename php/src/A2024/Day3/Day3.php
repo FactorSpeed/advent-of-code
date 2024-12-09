@@ -34,8 +34,8 @@ class Day3 extends AdventOfCode
 
         $matches = $matches[0];
 
-        for ($i = 0; $i < count($matches); $i++) {
-            eval('$result += $this->' . $matches[$i] . ';');
+        foreach ($matches as $iValue) {
+            eval('$result += $this->' . $iValue . ';');
         }
 
         return $result;
@@ -60,14 +60,14 @@ class Day3 extends AdventOfCode
 
         $take = true;
 
-        for ($i = 0; $i < count($matches); $i++) {
-            if ($matches[$i] === $DO || $matches[$i] === $DONT) {
-                $take = $matches[$i] === $DO;
+        foreach ($matches as $iValue) {
+            if ($iValue === $DO || $iValue === $DONT) {
+                $take = $iValue === $DO;
                 continue;
             }
 
             if ($take) {
-                eval('$result += $this->' . $matches[$i] . ';');
+                eval('$result += $this->' . $iValue . ';');
             }
         }
 

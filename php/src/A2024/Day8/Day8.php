@@ -45,12 +45,12 @@ class Day8 extends AdventOfCode
         return $combinations;
     }
 
-    private function calculateDifference(array $a, array $b): array
+    private function diff(array $a, array $b): array
     {
         return [$a[0] - $b[0], $a[1] - $b[1]];
     }
 
-    private function calculateNewPosition(array $a, array $delta): array
+    private function newPos(array $a, array $delta): array
     {
         return [$a[0] + $delta[0], $a[1] + $delta[1]];
     }
@@ -73,8 +73,8 @@ class Day8 extends AdventOfCode
 
         foreach ($combinations as $key => $pairs) {
             foreach ($pairs as [$pos1, $pos2]) {
-                $delta = $this->calculateDifference($pos1, $pos2);
-                [$x, $y] = $this->calculateNewPosition($pos1, $delta);
+                $delta = $this->diff($pos1, $pos2);
+                [$x, $y] = $this->newPos($pos1, $delta);
 
                 if ($x >= 0 && $x < $width && $y >= 0 && $y < $height && $this->dataset[$x][$y] !== $key) {
                     $positions[] = "$x|$y";
@@ -88,7 +88,7 @@ class Day8 extends AdventOfCode
     public function part2(): int
     {
         $coordinates = $this->extractCoordinates();
-        $combinations = array_map([$this, 'generateCombinations'], $coordinates);
+        $combinations = array_map(fn($a) => $this->generateCombinations($a), $coordinates);
 
         $dataset = $this->processPart2($combinations);
 
@@ -104,14 +104,14 @@ class Day8 extends AdventOfCode
 
         foreach ($combinations as $pairs) {
             foreach ($pairs as [$pos1, $pos2]) {
-                $delta = $this->calculateDifference($pos1, $pos2);
+                $delta = $this->diff($pos1, $pos2);
 
-                [$x, $y] = $this->calculateNewPosition($pos2, $delta);
+                [$x, $y] = $this->newPos($pos2, $delta);
                 while ($x >= 0 && $x < $width && $y >= 0 && $y < $height) {
                     if ($dataset[$x][$y] === '.') {
                         $dataset[$x][$y] = '#';
                     }
-                    [$x, $y] = $this->calculateNewPosition([$x, $y], $delta);
+                    [$x, $y] = $this->newPos([$x, $y], $delta);
                 }
             }
         }

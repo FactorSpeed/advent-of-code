@@ -26,7 +26,7 @@ class Day1 extends AdventOfCode
     {
         return array_sum(
             array_map(
-                fn(int $a, int $b) => abs($a - $b),
+                static fn(int $a, int $b) => abs($a - $b),
                 ...$this->dataset
             )
         );
@@ -36,7 +36,7 @@ class Day1 extends AdventOfCode
     {
         return array_reduce(
             $this->dataset[0],
-            fn($c, $v) => $c + count(array_filter($this->dataset[1], fn($b) => $b === $v)) * $v
+            fn($c, $v) => $c + count(array_filter($this->dataset[1], static fn($b) => $b === $v)) * $v
         );
     }
 }

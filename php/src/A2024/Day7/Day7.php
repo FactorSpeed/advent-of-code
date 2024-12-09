@@ -54,7 +54,7 @@ class Day7 extends AdventOfCode
     {
         $n = count($t) - 1;
 
-        if ($index == $n) {
+        if ($index === $n) {
             $results[] = $ta;
             return;
         }
@@ -93,7 +93,7 @@ class Day7 extends AdventOfCode
 
         $result = (int)trim($tokens[0]);
 
-        for ($i = 1; $i < count($tokens); $i += 2) {
+        for ($i = 1, $iMax = count($tokens); $i < $iMax; $i += 2) {
             $operator = trim($tokens[$i]);
             $next = (int)trim($tokens[$i + 1]);
 

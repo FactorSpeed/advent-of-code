@@ -23,9 +23,9 @@ class Day4 extends AdventOfCode
     {
         $result = 0;
 
-        for ($x = 0; $x < count($this->dataset); $x++) {
-            for ($y = 0; $y < count($this->dataset[$x]); $y++) {
-                if ($this->dataset[$x][$y] !== 'X') {
+        foreach ($this->dataset as $x => $xValue) {
+            foreach ($xValue as $y => $yValue) {
+                if ($yValue !== 'X') {
                     continue;
                 }
 
@@ -44,9 +44,9 @@ class Day4 extends AdventOfCode
     {
         $result = 0;
 
-        for ($x = 0; $x < count($this->dataset); $x++) {
-            for ($y = 0; $y < count($this->dataset[$x]); $y++) {
-                if ($this->dataset[$x][$y] !== 'A') {
+        foreach ($this->dataset as $x => $xValue) {
+            foreach ($xValue as $y => $yValue) {
+                if ($yValue !== 'A') {
                     continue;
                 }
 
