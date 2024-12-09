@@ -10,142 +10,126 @@ class Day8 extends AdventOfCode
 {
     public function readDataset(): void
     {
-        $dataset = [];
-
-        $default = '............
-........0...
-.....0......
-.......0....
-....0.......
-......A.....
-............
-............
-........A...
-.........A..
-............
-............';
-
-        foreach (file($this->file) as $line) {
-//        foreach (explode("\n", $default) as $line) {
-            $dataset[] = str_split(trim(str_replace("\n", "", $line)));
-        }
-
-        $this->dataset = $dataset;
+        $this->dataset = array_map(
+            static fn($line) => str_split(trim($line)),
+            file($this->file)
+        );
     }
 
-    public function combinations(array $d): array
+    private function extractCoordinates(): array
     {
-        $r = [];
-        foreach ($d as $a) {
-            foreach ($d as $b) {
-                if ($a !== $b) {
-                    $r[] = [$a, $b];
+        $coordinates = [];
+
+        foreach ($this->dataset as $i => $row) {
+            foreach ($row as $j => $cell) {
+                if ($cell !== '.') {
+                    $coordinates[$cell][] = [$i, $j];
+                }
+            }
+        }
+        return $coordinates;
+    }
+
+    private function generateCombinations(array $positions): array
+    {
+        $combinations = [];
+
+        foreach ($positions as $pos1) {
+            foreach ($positions as $pos2) {
+                if ($pos1 !== $pos2) {
+                    $combinations[] = [$pos1, $pos2];
                 }
             }
         }
 
-        return $r;
+        return $combinations;
     }
 
-    public function diff($a, $b): array
+    private function calculateDifference(array $a, array $b): array
     {
-        [$x1, $y1] = $a;
-        [$x2, $y2] = $b;
-
-        return [$x1 - $x2, $y1 - $y2];
+        return [$a[0] - $b[0], $a[1] - $b[1]];
     }
 
-    public function new_pos($a,$b): array
+    private function calculateNewPosition(array $a, array $delta): array
     {
-        [$x1, $y1] = $a;
-        [$x2, $y2] = $b;
-
-        return [$x1 + $x2 * 2, $y1 + $y2 * 2];
+        return [$a[0] + $delta[0], $a[1] + $delta[1]];
     }
 
     public function part1(): int
     {
-        $coords = [];
+        $coordinates = $this->extractCoordinates();
+        $combinations = array_map(fn($a) => $this->generateCombinations($a), $coordinates);
 
+        $uniquePositions = $this->processPart1($combinations);
+
+        return count(array_unique($uniquePositions));
+    }
+
+    private function processPart1(array $combinations): array
+    {
+        $positions = [];
         $width = count($this->dataset);
         $height = count($this->dataset[0]);
 
-        for ($i = 0; $i < $width; $i++) {
-            for ($j = 0; $j < $height; $j++) {
-                if ($this->dataset[$i][$j] !== '.') {
-                    $coords[$this->dataset[$i][$j]][] = [$i, $j];
+        foreach ($combinations as $key => $pairs) {
+            foreach ($pairs as [$pos1, $pos2]) {
+                $delta = $this->calculateDifference($pos1, $pos2);
+                [$x, $y] = $this->calculateNewPosition($pos1, $delta);
+
+                if ($x >= 0 && $x < $width && $y >= 0 && $y < $height && $this->dataset[$x][$y] !== $key) {
+                    $positions[] = "$x|$y";
                 }
             }
         }
 
-        $r = array_map(fn ($coord) => $this->combinations($coord), $coords);
-
-        $s = $this->process($r, $width, $height);
-
-        return count(array_unique($s));
+        return $positions;
     }
-
-    public function process(array $r, int $width, int $height): array
-    {
-        $s = [];
-
-        foreach ($r as $k => $coords) {
-            foreach ($coords as $coord) {
-                [$a, $b] = $coord;
-
-                $n = $this->diff($a, $b);
-                [$x, $y] = $this->new_pos($b,$n);
-
-                if ($x >= 0 && $x < $width && $y >= 0 && $y < $height && $this->dataset[$x][$y] !== $k) {
-                    $s[] = $x . '|' . $y;
-                }
-            }
-        }
-
-        return $s;
-    }
-
-    public function process2(array $r, int $width, int $height, &$s): array
-    {
-        foreach ($r as $k => $coords) {
-            foreach ($coords as $coord) {
-                [$a, $b] = $coord;
-
-                $n = $this->diff($a, $b);
-                [$x, $y] = $this->new_pos($b,$n);
-
-                if ($x >= 0 && $x < $width && $y >= 0 && $y < $height && $this->dataset[$x][$y] !== $k) {
-                    $s[] = $x . '|' . $y;
-                }
-            }
-        }
-
-        return $s;
-    }
-
 
     public function part2(): int
     {
-        $coords = [];
+        $coordinates = $this->extractCoordinates();
+        $combinations = array_map([$this, 'generateCombinations'], $coordinates);
 
-        $width = count($this->dataset);
-        $height = count($this->dataset[0]);
+        $dataset = $this->processPart2($combinations);
 
-        for ($i = 0; $i < $width; $i++) {
-            for ($j = 0; $j < $height; $j++) {
-                if ($this->dataset[$i][$j] !== '.') {
-                    $coords[$this->dataset[$i][$j]][] = [$i, $j];
+        return $this->countNonEmptyCells($dataset);
+    }
+
+    private function processPart2(array $combinations): array
+    {
+        $dataset = $this->dataset;
+
+        $width = count($dataset);
+        $height = count($dataset[0]);
+
+        foreach ($combinations as $pairs) {
+            foreach ($pairs as [$pos1, $pos2]) {
+                $delta = $this->calculateDifference($pos1, $pos2);
+
+                [$x, $y] = $this->calculateNewPosition($pos2, $delta);
+                while ($x >= 0 && $x < $width && $y >= 0 && $y < $height) {
+                    if ($dataset[$x][$y] === '.') {
+                        $dataset[$x][$y] = '#';
+                    }
+                    [$x, $y] = $this->calculateNewPosition([$x, $y], $delta);
                 }
             }
         }
 
-        $r = array_map(fn ($coord) => $this->combinations($coord), $coords);
+        return $dataset;
+    }
 
-        $s = [];
-
-        $this->process2($r, $width, $height, $s);
-
-        return count(array_unique($s));
+    private function countNonEmptyCells($dataset): int
+    {
+        $count = 0;
+        foreach ($dataset as $row) {
+            foreach ($row as $cell) {
+                if ($cell !== '.') {
+                    $count++;
+                }
+            }
+        }
+        return $count;
     }
 }
 
