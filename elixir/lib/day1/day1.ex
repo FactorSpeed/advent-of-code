@@ -4,13 +4,10 @@ defmodule Day1 do
   """
 
   def read_file(path) do
-    {status, content} = File.read(path)
-
-    if status != :ok do
-      :break
+    case File.read(path) do
+      {:ok, content} -> get_dataset(String.replace(content, ~r/\r/, ""))
+      _ -> :break
     end
-
-    get_dataset(String.replace(content, ~r/\r/, ""))
   end
 
   def run do
