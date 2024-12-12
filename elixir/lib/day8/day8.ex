@@ -3,7 +3,7 @@ defmodule Day8 do
   Advent of Code 2024 - Day 8
   """
 
-  def read_file(path) do
+  defp read_file(path) do
     case File.read(path) do
       {:ok, content} -> get_dataset(String.replace(content, ~r/\r/, ""))
       _ -> :break
@@ -31,7 +31,7 @@ defmodule Day8 do
     :io_lib.format("~.6f", [seconds / 1_000_000]) |> List.to_string()
   end
 
-  def get_dataset(content) do
+  defp get_dataset(content) do
     lines = String.split(content, "\n", trim: true)
 
       Enum.reduce(lines, [], fn line, n ->
@@ -39,15 +39,15 @@ defmodule Day8 do
       end)
   end
 
-  def combinations(list) do
+  defp combinations(list) do
     for x <- list, y <- list, x != y, do: [x, y]
   end
 
-  def diff({x1, y1}, {x2, y2}) do
+  defp diff({x1, y1}, {x2, y2}) do
     {x1 - x2, y1 - y2}
   end
 
-  def new_pos({x1, y1}, {x2, y2}) do
+  defp new_pos({x1, y1}, {x2, y2}) do
     {dx, dy} = diff({x1, y1}, {x2, y2})
 
     [
@@ -74,7 +74,7 @@ defmodule Day8 do
     ]
   end
 
-  def process(acc_j, coord1, coord2, dataset) do
+  defp process(acc_j, coord1, coord2, dataset) do
     Enum.reduce(new_pos(coord1, coord2), acc_j, fn {x, y}, acc_k ->
       if x >= 0 and x < length(dataset) and y >= 0 and y < length(Enum.at(dataset, 0)) do
         acc_k ++ [{x, y}]
@@ -84,7 +84,7 @@ defmodule Day8 do
     end)
   end
 
-  def part1(dataset) do
+  defp part1(dataset) do
     data =
       Enum.reduce(Enum.with_index(dataset), %{}, fn {row, i}, acc_i ->
         Enum.reduce(Enum.with_index(row), acc_i, fn {element, j}, acc_j ->
@@ -106,7 +106,7 @@ defmodule Day8 do
     Enum.uniq(positions) |> Enum.count()
   end
 
-  def part2(_dataset) do
+  defp part2(_dataset) do
     0
   end
 end

@@ -3,7 +3,7 @@ defmodule Day11 do
   Advent of Code 2024 - Day 11
   """
 
-  def read_file(path) do
+  defp read_file(path) do
     case File.read(path) do
       {:ok, content} -> get_dataset(String.replace(content, ~r/\r/, ""))
       _ -> :break
@@ -31,11 +31,11 @@ defmodule Day11 do
     :io_lib.format("~.6f", [seconds / 1_000_000]) |> List.to_string()
   end
 
-  def get_dataset(content) do
+  defp get_dataset(content) do
     String.split(content, " ", trim: true) |> Enum.map(&elem(Integer.parse(&1), 0))
   end
 
-  defp apply_transformation(stone) do
+  defp transform(stone) do
     case stone do
       0 ->
         [1]
@@ -46,7 +46,6 @@ defmodule Day11 do
 
         if rem(length, 2) == 0 do
           {left, right} = String.split_at(str_n, div(length, 2))
-
           [String.to_integer(left), String.to_integer(right)]
         else
           [n * 2024]
@@ -54,17 +53,28 @@ defmodule Day11 do
     end
   end
 
-  def part1(dataset) do
-    blinks = 25
+  defp process(stones, 0), do: stones
 
-    Enum.reduce(1..blinks, dataset, fn _, acc ->
-      Enum.flat_map(acc, &apply_transformation(&1))
+  defp process(stones, blinks) do
+    Enum.reduce(stones, %{}, fn {stone, count}, acc ->
+      transform(stone)
+      |> Enum.reduce(acc, fn s, acc2 ->
+        Map.update(acc2, s, count, &(&1 + count))
+      end)
     end)
-    |> Enum.count()
+    |> process(blinks - 1)
   end
 
-  def part2(_dataset) do
-    0
+  defp part1(dataset) do
+    start(dataset, 25)
+  end
+
+  defp part2(dataset) do
+    start(dataset, 75)
+  end
+
+  defp start(dataset, blinks) do
+    dataset |> Enum.frequencies() |> process(blinks) |> Map.values() |> Enum.sum()
   end
 end
 

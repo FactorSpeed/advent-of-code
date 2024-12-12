@@ -5,7 +5,7 @@ defmodule Day10 do
 
   require Direction
 
-  def read_file(path) do
+  defp read_file(path) do
     case File.read(path) do
       {:ok, content} -> get_dataset(String.replace(content, ~r/\r/, ""))
       _ -> :break
@@ -33,7 +33,7 @@ defmodule Day10 do
     :io_lib.format("~.6f", [seconds / 1_000_000]) |> List.to_string()
   end
 
-  def get_dataset(content) do
+  defp get_dataset(content) do
     String.split(content, "\n", trim: true)
     |> Enum.map(fn line ->
       line
@@ -42,7 +42,7 @@ defmodule Day10 do
     end)
   end
 
-  def cell(dataset, [i, j]) do
+  defp cell(dataset, [i, j]) do
     if i < 0 or j < 0 or i >= length(dataset) or j >= length(Enum.at(dataset, 0, [])) do
       nil
     else
@@ -50,7 +50,7 @@ defmodule Day10 do
     end
   end
 
-  def process1(dataset, [i, j], visited) do
+  defp process1(dataset, [i, j], visited) do
     if MapSet.member?(visited, {i, j}) do
       visited
     else
@@ -75,7 +75,7 @@ defmodule Day10 do
     end
   end
 
-  def process2(dataset, [i, j], acc) do
+  defp process2(dataset, [i, j], acc) do
     Enum.reduce(Direction.directions(), acc, fn direction_fn, acc ->
       current = cell(dataset, [i, j])
       neighbor_pos = direction_fn.(i, j)
@@ -93,7 +93,7 @@ defmodule Day10 do
     end)
   end
 
-  def part1(dataset) do
+  defp part1(dataset) do
     Enum.reduce(Enum.with_index(dataset), 0, fn {row, i}, acc ->
       Enum.reduce(Enum.with_index(row), acc, fn {cell, j}, acc ->
         if cell == 0 do
@@ -106,7 +106,7 @@ defmodule Day10 do
     end)
   end
 
-  def part2(dataset) do
+  defp part2(dataset) do
     data = Enum.reduce(Enum.with_index(dataset), 0, fn {row, i}, acc ->
       Enum.reduce(Enum.with_index(row), acc, fn {cell, j}, acc ->
         if cell == 0 do

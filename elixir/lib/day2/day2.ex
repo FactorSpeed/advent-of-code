@@ -3,7 +3,7 @@ defmodule Day2 do
   Advent of Code 2024 - Day 2
   """
 
-  def read_file(path) do
+  defp read_file(path) do
     case File.read(path) do
       {:ok, content} -> get_dataset(String.replace(content, ~r/\r/, ""))
       _ -> :break
@@ -31,7 +31,7 @@ defmodule Day2 do
     :io_lib.format("~.6f", [seconds / 1_000_000]) |> List.to_string()
   end
 
-  def get_dataset(content) do
+  defp get_dataset(content) do
     lines = String.split(content, "\n", trim: true)
 
     dataset = []
@@ -49,21 +49,21 @@ defmodule Day2 do
     dataset
   end
 
-  def is_increase(line) do
+  defp is_increase(line) do
     a = Enum.sort(line)
     a === line
   end
 
-  def is_decrease(line) do
+  defp is_decrease(line) do
     a = Enum.sort(line, :desc)
     a === line
   end
 
-  def check_line(line) do
+  defp check_line(line) do
     is_increase(line) or is_decrease(line)
   end
 
-  def is_good(line) do
+  defp is_good(line) do
     if check_line(line) do
       ok =
         Enum.reduce_while(0..(length(line) - 2), true, fn i, acc ->
@@ -82,7 +82,7 @@ defmodule Day2 do
     end
   end
 
-  def part1(dataset) do
+  defp part1(dataset) do
     Enum.reduce(dataset, 0, fn line, acc ->
       if is_good(line) do
         acc + 1
@@ -92,7 +92,7 @@ defmodule Day2 do
     end)
   end
 
-  def part2(dataset) do
+  defp part2(dataset) do
     Enum.reduce(dataset, 0, fn line, acc ->
       if is_good(line) do
         acc + 1
