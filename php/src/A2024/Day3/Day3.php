@@ -75,5 +75,5 @@ class Day3 extends AdventOfCode
     }
 }
 
-$day = new Day3(__DIR__ . '/3.txt');
+$day = new Day3(__DIR__);
 $day->run();

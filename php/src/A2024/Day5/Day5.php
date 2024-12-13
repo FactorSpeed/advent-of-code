@@ -110,5 +110,5 @@ class Day5 extends AdventOfCode
     }
 }
 
-$day = new Day5(__DIR__ . '/5.txt');
+$day = new Day5(__DIR__);
 $day->run();

@@ -133,5 +133,5 @@ class Day8 extends AdventOfCode
     }
 }
 
-$day = new Day8(__DIR__ . '/8.txt');
+$day = new Day8(__DIR__);
 $day->run();
