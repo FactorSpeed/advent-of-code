@@ -50,35 +50,34 @@ defmodule Day13 do
       {px, ", Y=" <> prize} = Integer.parse(prize)
       {py, _} = Integer.parse(prize)
 
-      {ax, ay, bx, by, px, py}
+      {ax, bx, px, ay, by, py}
     end)
   end
 
   defp part1(dataset) do
-    dataset
-    |> Enum.map(&insert_tokens/1)
-    |> Enum.sum()
-    |> round()
+    dataset |> Enum.map(&solve/1) |> Enum.sum()
   end
 
   defp part2(dataset) do
-    dataset
-    |> Enum.map(&insert_tokens(&1, 10_000_000_000_000))
-    |> Enum.sum()
+    dataset |> Enum.map(&solve(&1, 10_000_000_000_000)) |> Enum.sum()
   end
 
-  defp insert_tokens({ax, ay, bx, by, px, py}, offset \\ 0) do
-    px = px + offset
-    py = py + offset
+  defp solve({a, b, e, c, d, f}, offset \\ 0) do
+    e = e + offset
+    f = f + offset
 
-    a_tokens = (bx * py - by * px) / (ay * bx - ax * by)
-    b_tokens = (px - a_tokens * ax) / bx
-    tokens = 3 * a_tokens + b_tokens
+    den = a * d - b * c
+    nomx = e * d - b * f
+    nomy = a * f - e * c
 
-    if tokens > 0 and
-         rem(bx * py - by * px, ay * bx - ax * by) == 0 and
-         rem(round(px - a_tokens * ax), bx) == 0 do
-      round(tokens)
+    x = div(nomx, den)
+    y = div(nomy, den)
+
+    u = a * x + b * y
+    v = c * x + d * y
+
+    if u === e and v === f do
+      x * 3 + y
     else
       0
     end
