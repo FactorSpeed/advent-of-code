@@ -16,14 +16,7 @@ class Day12 extends AdventOfCode
             $dataset[] = str_split(trim(str_replace("\n", "", $line)));
         }
 
-        $dataset_test = [];
-
-        foreach (file($this->file_test) as $line) {
-            $dataset_test[] = str_split(trim(str_replace("\n", "", $line)));
-        }
-
         $this->dataset = $dataset;
-        $this->dataset_test = $dataset_test;
     }
 
     public function getArea(array $region): int

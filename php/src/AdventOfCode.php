@@ -11,7 +11,6 @@ class AdventOfCode
     public string $file;
     public string $file_test;
     public array|string $dataset;
-    public array|string $dataset_test;
 
     private ?ConsoleOutput $output;
 
