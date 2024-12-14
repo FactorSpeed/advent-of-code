@@ -41,5 +41,5 @@ class Day1 extends AdventOfCode
     }
 }
 
-$day = new Day1(__DIR__ . '/1.txt');
+$day = new Day1(__DIR__);
 $day->run();

@@ -9,13 +9,16 @@ use Symfony\Component\Console\Output\ConsoleOutput;
 class AdventOfCode
 {
     public string $file;
+    public string $file_test;
     public array|string $dataset;
+    public array|string $dataset_test;
 
     private ?ConsoleOutput $output;
 
     public function __construct(?string $file = null)
     {
-        $this->file = $file;
+        $this->file = $file . '/input.txt';
+        $this->file_test = $file . '/test.txt';
         $this->output = new ConsoleOutput();
     }
 
