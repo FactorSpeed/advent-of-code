@@ -59,7 +59,7 @@ class Day14 extends AdventOfCode
             [$vx, $vy] = $dataset['v'];
 
             for ($k = 0; $k < 100; $k++) {
-                [$ny, $nx] = [$ny + $vy, $nx + $vx];
+                [$nx, $ny] = [$nx + $vx, $ny + $vy];
 
                 if ($nx < 0) {
                     $nx = $row + $nx;
@@ -119,7 +119,87 @@ class Day14 extends AdventOfCode
 
     public function part2(): int
     {
-        return 0;
+        $data = $this->dataset;
+
+        [$row, $col] = $this->getRowCol();
+
+        for ($k = 1; $k < 10_000; $k++) {
+            $set = [];
+            $chars = ',';
+            foreach ($data as $d => $dataset) {
+                [$nx, $ny] = $dataset['p'];
+                [$vx, $vy] = $dataset['v'];
+
+                [$nx, $ny] = [$nx + $vx, $ny + $vy];
+
+                if ($nx < 0) {
+                    $nx = $row + $nx;
+                }
+
+                if ($nx >= $row) {
+                    $nx -= $row;
+                }
+
+                if ($ny < 0) {
+                    $ny = $col + $ny;
+                }
+
+                if ($ny >= $col) {
+                    $ny -= $col;
+                }
+
+                $data[$d]['p'] = [$nx, $ny];
+                $set[] = [$nx, $ny];
+                $chars .= $nx . '|' . $ny . ',';
+            }
+
+            if($this->countNeighbors($set, $chars) * 100 / count($set) > 60) {
+                $d = [];
+                for ($i = 0; $i < $row; $i++) {
+                    $d[] = array_fill(0, $col, '.');
+                }
+
+                foreach ($set as $s) {
+                    $d[$s[0]][$s[1]] = '#';
+                }
+
+                foreach ($d as $s) {
+                    echo implode('', $s) . PHP_EOL;
+                }
+
+                return $k;
+            }
+        }
+
+        return $k;
+    }
+
+    public function countNeighbors(array $set, string $chars): int
+    {
+        $points = [
+            [0, -1],
+            [1, 0],
+            [0, 1],
+            [-1, 0]
+        ];
+
+        $average = 0;
+
+        foreach ($set as $s) {
+            [$nx, $ny] = $s;
+
+            foreach ($points as $point) {
+                [$vx, $vy] = $point;
+
+                $t = ',' . ($nx + $vx) . '|' . ($ny + $vy) . ',';
+
+                if (str_contains($chars, $t)) {
+                    $average++;
+                }
+            }
+        }
+
+        return $average;
     }
 }
 
