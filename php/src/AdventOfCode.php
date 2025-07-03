@@ -10,7 +10,7 @@ class AdventOfCode
 {
     public string $file;
     public string $file_test;
-    public array|string $dataset;
+    public mixed $dataset;
 
     private ?ConsoleOutput $output;
 
