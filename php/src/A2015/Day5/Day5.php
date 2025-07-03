@@ -30,11 +30,9 @@ class Day5 extends AdventOfCode
         return preg_match('/(.)\1/', $string);
     }
 
-    public const array CONSTRAINTS = ['ab', 'cd', 'pq', 'xy'];
-
     public function hasNotConstraints(string $string): bool
     {
-        return array_all(self::CONSTRAINTS, static fn($constraint) => !str_contains($string, $constraint));
+        return array_all(['ab', 'cd', 'pq', 'xy'], static fn($constraint) => !str_contains($string, $constraint));
     }
 
     public function part1(): int
@@ -54,9 +52,43 @@ class Day5 extends AdventOfCode
         return $result;
     }
 
+    public function hasPairs(string $string): bool
+    {
+        for ($i = 0; $i < strlen($string) - 1; $i++) {
+            $pair = substr($string, $i, 2);
+            if (strpos($string, $pair, $i + 2)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public function hasRepeat(string $string): bool
+    {
+        for ($i = 0; $i < strlen($string) - 2; $i++) {
+            if ($string[$i] === $string[$i + 2]) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     public function part2(): int
     {
-        return 0;
+        $result = 0;
+
+        foreach ($this->dataset as $string) {
+            if (
+                $this->hasPairs($string)
+                && $this->hasRepeat($string)
+            ) {
+                $result++;
+            }
+        }
+
+        return $result;
     }
 }
 
