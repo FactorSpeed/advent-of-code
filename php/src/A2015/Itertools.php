@@ -1,6 +1,6 @@
 <?php
 
-namespace Factor\Aoc\A2015\Day9;
+namespace Factor\Aoc\A2015;
 
 /**
  * Based on https://rosettacode.org/wiki/Permutations

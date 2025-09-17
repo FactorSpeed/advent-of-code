@@ -3,8 +3,8 @@
 namespace Factor\Aoc\A2015\Day9;
 
 require __DIR__ . '/../../AdventOfCode.php';
-require_once __DIR__ . '/Itertools.php';
 
+use Factor\Aoc\A2015\Itertools;
 use Factor\Aoc\AdventOfCode;
 
 class Day9 extends AdventOfCode
@@ -47,7 +47,7 @@ class Day9 extends AdventOfCode
         return 0;
     }
 
-    public function getCombinations(): array
+    public function getPermutations(): array
     {
         return new Itertools()->permutations($this->getCities());
     }
@@ -58,11 +58,11 @@ class Day9 extends AdventOfCode
             return $this->_routes;
         }
 
-        foreach ($this->getCombinations() as $combination) {
+        foreach ($this->getPermutations() as $permutation) {
             $distance = 0;
 
-            for ($i = 1, $iMax = count($combination); $i < $iMax; $i++) {
-                $distance += $this->getDistance($combination[$i - 1], $combination[$i]);
+            for ($i = 1, $iMax = count($permutation); $i < $iMax; $i++) {
+                $distance += $this->getDistance($permutation[$i - 1], $permutation[$i]);
             }
 
             $this->_routes[] = $distance;
