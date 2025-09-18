@@ -5,6 +5,7 @@ namespace Factor\Aoc\A2015;
 /**
  * Based on https://rosettacode.org/wiki/Permutations
  * Based on https://stackoverflow.com/questions/15577651/generate-all-compositions-of-an-integer-into-k-parts
+ * Based on https://rosettacode.org/wiki/Combinations
  */
 class Itertools
 {
@@ -28,7 +29,8 @@ class Itertools
         return $ac;
     }
 
-    public function getFirstComposition(int $n, int $k): array|false {
+    public function getFirstComposition(int $n, int $k): array|false
+    {
         if ($n < $k) {
             return false;
         }
@@ -37,7 +39,8 @@ class Itertools
         return $composition;
     }
 
-    public function getNextComposition(int $n, int $k, array &$composition): bool {
+    public function getNextComposition(int $n, int $k, array &$composition): bool
+    {
         if ($composition[0] === $n - $k + 1) {
             return false;
         }
@@ -65,5 +68,48 @@ class Itertools
         do {
             yield $composition;
         } while ($this->getNextComposition($n, $k, $composition));
+    }
+
+    public function combinations(array $set = [], string $range = '1'): array
+    {
+        if (str_contains($range, '-')) {
+            [$start, $end] = explode('-', $range);
+            [$start, $end] = [(int)$start, (int)$end];
+        } else {
+            [$start, $end] = [(int)$range, (int)$range];
+        }
+
+        $result = [];
+
+        for ($i = $start; $i <= $end; $i++) {
+            $result = [...$result, ...$this->getNextCombination($set, $i)];
+        }
+
+        return $result;
+    }
+
+    private function getNextCombination(array $set = [], int $size = 0): array
+    {
+        if ($size === 0) {
+            return [[]];
+        }
+
+        if ($set === []) {
+            return [];
+        }
+
+        $prefix = [array_shift($set)];
+
+        $result = [];
+
+        foreach ($this->getNextCombination($set, $size-1) as $suffix) {
+            $result[] = array_merge($prefix, $suffix);
+        }
+
+        foreach ($this->getNextCombination($set, $size) as $next) {
+            $result[] = $next;
+        }
+
+        return $result;
     }
 }
