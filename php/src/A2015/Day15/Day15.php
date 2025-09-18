@@ -55,7 +55,6 @@ class Day15 extends AdventOfCode
     {
         $scores = [];
 
-        /** @var \Factor\Aoc\A2015\Day15\Ingredient $d */
         foreach (new Itertools()->compositions(100, count($this->dataset)) as $c) {
             $score = $this->getScore($c);
 
@@ -71,7 +70,6 @@ class Day15 extends AdventOfCode
     {
         $scores = [];
 
-        /** @var \Factor\Aoc\A2015\Day15\Ingredient $d */
         foreach (new Itertools()->compositions(100, count($this->dataset)) as $c) {
             $score = $this->getScore($c);
 
