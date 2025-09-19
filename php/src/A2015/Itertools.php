@@ -29,7 +29,7 @@ class Itertools
         return $ac;
     }
 
-    public function getFirstComposition(int $n, int $k): array|false
+    private function getFirstComposition(int $n, int $k): array|false
     {
         if ($n < $k) {
             return false;
@@ -39,7 +39,7 @@ class Itertools
         return $composition;
     }
 
-    public function getNextComposition(int $n, int $k, array &$composition): bool
+    private function getNextComposition(int $n, int $k, array &$composition): bool
     {
         if ($composition[0] === $n - $k + 1) {
             return false;
