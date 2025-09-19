@@ -8,6 +8,8 @@ use Factor\Aoc\AdventOfCode;
 
 class Day19 extends AdventOfCode
 {
+    public string $text = '';
+
     public function readDataset(): void
     {
         $dataset = [];
@@ -15,9 +17,9 @@ class Day19 extends AdventOfCode
         foreach (file($this->file) as $line) {
             $a = preg_match('#(\w+) => (\w+)#', $line, $matches);
             if ($a) {
-                $dataset['transform'][] = [$matches[1] => $matches[2]];
+                $dataset[] = [$matches[1] => $matches[2]];
             } else {
-                $dataset['text'] = trim($line);
+                $this->text = trim($line);
             }
         }
 
@@ -28,35 +30,56 @@ class Day19 extends AdventOfCode
     {
         $results = [];
 
-        $subject = $this->dataset['text'];
-
-        foreach ($this->dataset['transform'] as $transform) {
-            foreach ($transform as $key => $value) {
-                $regex = "/$key/";
-                preg_match_all($regex, $subject, $matches, PREG_SET_ORDER);
-                foreach ($matches as $index => $letter) {
-                    $counter = 0;
-                    $results[] = preg_replace_callback(
-                        $regex,
-                        static function ($m) use (&$counter, $index, $value) {
-                            if ($counter++ === $index) {
-                                return $value;
-                            }
-
-                            return $m[0];
-                        },
-                        $subject
-                    );
-                }
+        foreach ($this->dataset as $transform) {
+            [$key, $value] = [array_keys($transform)[0], array_values($transform)[0]];
+            $pos = 0;
+            while (($pos = strpos($this->text, $key, $pos)) !== false) {
+                $results[] = substr_replace($this->text, $value, $pos, strlen($key));
+                ++$pos;
             }
         }
 
         return count(array_unique($results));
     }
 
+    public function solvePart2(): int
+    {
+        $text = $this->text;
+        $steps = 0;
+        $dataset = $this->dataset;
+        $same = 0;
+
+        while ($text !== 'e') {
+            foreach ($dataset as $transform) {
+                [$key, $value] = [array_values($transform)[0], array_keys($transform)[0]];
+                $pos = strpos($text, $key);
+
+                if (false === $pos) {
+                    ++$same;
+                    continue;
+                }
+
+                $text = substr_replace($text, $value, $pos, strlen($key));
+                ++$steps;
+            }
+
+            if ($same === count($this->dataset)) {
+                $text = $this->text;
+                $steps = 0;
+                shuffle($dataset);
+            }
+
+            $same = 0;
+        }
+
+        return $steps;
+    }
+
     public function part2(): int
     {
-        return 0;
+        # Weird solution with bruteforce
+        # True explanation here https://www.reddit.com/r/adventofcode/comments/3xflz8/comment/cy4etju/
+        return $this->solvePart2();
     }
 }
 
